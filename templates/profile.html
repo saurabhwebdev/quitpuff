@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-6 transform hover:scale-105 transition-transform duration-200">
+        <h2 class="text-2xl font-bold mb-6">Profile Settings</h2>
+        
+        <form method="POST" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" name="name" required
+                           value="{{ current_user.name }}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 focus:ring-2 px-3 py-2">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Age</label>
+                    <input type="number" name="age" required min="18"
+                           value="{{ current_user.age }}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 focus:ring-2 px-3 py-2">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Cigarettes per day</label>
+                    <input type="number" name="cigs_per_day" required min="1"
+                           value="{{ current_user.cigs_per_day }}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 focus:ring-2 px-3 py-2">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Cost per cigarette</label>
+                    <input type="number" name="cost_per_cig" required step="0.01"
+                           value="{{ "%.2f"|format(current_user.cost_per_cig) }}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Currency</label>
+                    <select name="currency" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
+                        <option value="INR" {% if current_user.currency == 'INR' %}selected{% endif %}>INR (₹)</option>
+                        <option value="USD" {% if current_user.currency == 'USD' %}selected{% endif %}>USD ($)</option>
+                        <option value="EUR" {% if current_user.currency == 'EUR' %}selected{% endif %}>EUR (€)</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Cigarettes per pack</label>
+                    <input type="number" name="cigs_per_pack" required min="1"
+                           value="{{ current_user.cigs_per_pack }}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-4">
+                <a href="{{ url_for('dashboard') }}"
+                   class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                    Cancel
+                </a>
+                <button type="submit"
+                        class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Account Statistics -->
+    <div class="mt-8 bg-white rounded-lg shadow-lg p-6 mb-8 transform hover:scale-105 transition-transform duration-200">
+        <h2 class="text-xl font-semibold mb-4">Account Statistics</h2>
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-600">Member since</p>
+                <p class="text-lg font-medium text-gray-900" id="memberSinceDisplay">
+                    {{ current_user.created_at.strftime('%Y-%m-%d') }}
+                </p>
+            </div>
+            <button onclick="showMemberSinceEdit()" 
+                    class="text-emerald-600 hover:text-emerald-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Member Since Edit Form -->
+        <form action="{{ url_for('update_member_since') }}" method="POST" 
+              id="memberSinceForm" class="hidden mt-4">
+            <div class="flex items-center gap-2">
+                <input type="date" name="member_since" 
+                       value="{{ current_user.created_at.strftime('%Y-%m-%d') }}"
+                       class="px-3 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500">
+                <button type="submit" 
+                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700">
+                    Save
+                </button>
+                <button type="button" onclick="hideMemberSinceEdit()"
+                        class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Delete Account Section -->
+    <div class="mt-8 bg-white rounded-lg shadow-lg p-6 border-2 border-red-200 transform hover:scale-105 transition-transform duration-200">
+        <h3 class="text-xl font-bold mb-4 text-red-600">Danger Zone</h3>
+        <p class="text-gray-600 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
+        
+        <form action="{{ url_for('delete_account') }}" method="POST" 
+              onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+            <button type="submit"
+                    class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                Delete Account
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function showMemberSinceEdit() {
+        document.getElementById('memberSinceForm').classList.remove('hidden');
+    }
+    
+    function hideMemberSinceEdit() {
+        document.getElementById('memberSinceForm').classList.add('hidden');
+    }
+</script>
+{% endblock %} 

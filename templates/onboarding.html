@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-[80vh] py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto space-y-8">
+        <div>
+            <h2 class="text-center text-3xl font-extrabold text-gray-900">Let's Get Started</h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Help us understand your smoking habits
+            </p>
+        </div>
+        
+        <form class="mt-8 space-y-6" action="{{ url_for('onboarding') }}" method="POST">
+            <div class="space-y-4">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" name="name" id="name" required
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                </div>
+                
+                <div>
+                    <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+                    <input type="number" name="age" id="age" required min="18"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                </div>
+                
+                <div>
+                    <label for="cigs_per_day" class="block text-sm font-medium text-gray-700">Daily Cigarette Consumption</label>
+                    <input type="number" name="cigs_per_day" id="cigs_per_day" required min="1"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                </div>
+                
+                <div>
+                    <label for="cost_per_cig" class="block text-sm font-medium text-gray-700">Cost per Cigarette</label>
+                    <input type="number" name="cost_per_cig" id="cost_per_cig" required step="0.01" min="0"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                </div>
+                
+                <div>
+                    <label for="currency" class="block text-sm font-medium text-gray-700">Currency</label>
+                    <select name="currency" id="currency" required
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                        <option value="INR">INR (₹)</option>
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="cigs_per_pack" class="block text-sm font-medium text-gray-700">Cigarettes per Pack</label>
+                    <input type="number" name="cigs_per_pack" id="cigs_per_pack" required min="1"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                </div>
+            </div>
+ 
+            <div>
+                <button type="submit"
+                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                    Complete Profile
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Cigarette
@@ -338,6 +338,31 @@ def internal_error(error):
 def handle_exception(e):
     app.logger.error(f'Unhandled Exception: {str(e)}')
     return render_template('error.html', error=e), 500
+
+@app.route('/health')
+def health_check():
+    try:
+        # Test database connection
+        db.session.execute('SELECT 1')
+        return jsonify({'status': 'healthy', 'database': 'connected'})
+    except Exception as e:
+        app.logger.error(f"Health check failed: {str(e)}")
+        return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
+
+@app.before_request
+def before_request():
+    app.logger.info(f"Processing request: {request.method} {request.path}")
+
+@app.after_request
+def after_request(response):
+    app.logger.info(f"Request completed: {response.status_code}")
+    return response
+
+@app.errorhandler(500)
+def handle_500(error):
+    app.logger.error(f"Internal Server Error: {error}")
+    db.session.rollback()
+    return render_template('error.html'), 500
 
 if __name__ == '__main__':
     # Create the instance directory if it doesn't exist

@@ -7,9 +7,9 @@ db = SQLAlchemy()
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(80), nullable=True)
     age = db.Column(db.Integer, nullable=True)
     cigs_per_day = db.Column(db.Integer, nullable=True)

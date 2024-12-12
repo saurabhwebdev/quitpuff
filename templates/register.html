@@ -1,76 +1,166 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="min-h-screen flex">
-    <!-- Left Section - Illustration/Info -->
-    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-emerald-400 to-emerald-600 p-12 text-white items-center justify-center">
-        <div class="max-w-lg">
-            <div class="mb-8">
-                <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                          d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z M16 8L2 22M17.5 15H9" />
-                </svg>
-            </div>
-            <h1 class="text-4xl font-bold mb-6">Start Your Journey</h1>
-            <p class="text-lg mb-8 text-emerald-50">Join thousands of others who have successfully quit smoking using QuitPuff.</p>
-            <div class="space-y-4 text-emerald-50">
-                <div class="flex items-center">
-                    <svg class="w-6 h-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    <span>Easy to get started</span>
-                </div>
-                <div class="flex items-center">
-                    <svg class="w-6 h-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    <span>Track your progress</span>
-                </div>
-                <div class="flex items-center">
-                    <svg class="w-6 h-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    <span>Join our community</span>
-                </div>
-            </div>
-        </div>
+<div class="min-h-screen relative bg-[#0F172A] flex items-center justify-center p-4">
+    <!-- Animated Background -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute w-[500px] h-[500px] top-[-250px] right-[-250px] bg-emerald-500/30 rounded-full blur-[100px]"></div>
+        <div class="absolute w-[500px] h-[500px] bottom-[-250px] left-[-250px] bg-blue-500/30 rounded-full blur-[100px]"></div>
+        <div class="absolute inset-0 backdrop-blur-[120px]"></div>
     </div>
 
-    <!-- Right Section - Register Form -->
-    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 bg-white">
-        <div class="w-full max-w-md space-y-8">
-            <div class="text-center">
-                <h2 class="text-3xl font-bold text-gray-900">Create Account</h2>
-                <p class="mt-2 text-sm text-gray-600">Take the first step towards a smoke-free life</p>
+    <!-- Main Container -->
+    <div class="relative w-full max-w-[1200px] bg-white/[0.05] backdrop-blur-xl rounded-[30px] shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-white/10">
+        <!-- Left Section - Form -->
+        <div class="lg:w-[55%] bg-white p-12 lg:p-16 lg:rounded-r-[50px] relative order-2 lg:order-1">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-bl-full"></div>
+            <div class="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/5 rounded-tr-full"></div>
+            
+            <div class="max-w-md mx-auto relative">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-gray-900 mb-4">Create Account 🚀</h2>
+                    <p class="text-gray-600 text-lg">Take your first step towards a healthier life</p>
+                </div>
+
+                <form action="{{ url_for('register') }}" method="POST" class="space-y-8">
+                    <div class="space-y-6">
+                        <!-- Username Input -->
+                        <div class="group">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose Username</label>
+                            <div class="relative transform-gpu transition-all duration-200 hover:-translate-y-0.5">
+                                <input type="text" name="username" required
+                                       class="w-full px-6 py-4 bg-gray-50 rounded-xl border-2 border-gray-100 focus:border-emerald-500 focus:ring-emerald-500 transition-all duration-200"
+                                       placeholder="Enter your username">
+                                <div class="absolute right-4 top-4 text-gray-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Password Input -->
+                        <div class="group">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Create Password</label>
+                            <div class="relative transform-gpu transition-all duration-200 hover:-translate-y-0.5">
+                                <input type="password" name="password" required
+                                       class="w-full px-6 py-4 bg-gray-50 rounded-xl border-2 border-gray-100 focus:border-emerald-500 focus:ring-emerald-500 transition-all duration-200"
+                                       placeholder="Enter your password">
+                                <div class="absolute right-4 top-4 text-gray-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Register Button -->
+                    <button type="submit" 
+                            class="w-full bg-gradient-to-r from-emerald-500 via-emerald-600 to-blue-600 text-white py-4 px-6 rounded-xl font-semibold text-lg shadow-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-300 relative overflow-hidden group">
+                        <span class="absolute inset-0 bg-gradient-to-r from-emerald-600 via-blue-600 to-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                        <span class="relative">Create Account</span>
+                    </button>
+
+                    <!-- Login Link -->
+                    <div class="text-center mt-8">
+                        <p class="text-gray-600">
+                            Already have an account? 
+                            <a href="{{ url_for('login') }}" 
+                               class="font-semibold text-emerald-600 hover:text-emerald-700 transition-colors inline-flex items-center group">
+                                Sign in here
+                                <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a>
+                        </p>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <form class="mt-8 space-y-6" action="{{ url_for('register') }}" method="POST">
-                <div class="space-y-4">
-                    <div>
-                        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                        <input type="text" id="username" name="username" required 
-                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
+        <!-- Right Section - Features -->
+        <div class="lg:w-[45%] p-12 lg:p-16 relative overflow-hidden order-1 lg:order-2">
+            <!-- Brand Section -->
+            <div class="relative z-10 h-full flex flex-col">
+                <div class="flex items-center space-x-4 mb-16">
+                    <div class="w-14 h-14 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-xl rotate-3 hover:rotate-6 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
                     </div>
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                        <input type="password" id="password" name="password" required 
-                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
-                    </div>
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+                        QuitPuff
+                    </h1>
                 </div>
 
-                <button type="submit" 
-                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transform hover:scale-105 transition-all duration-200">
-                    Create Account
-                </button>
+                <div class="flex-grow flex flex-col justify-center">
+                    <h2 class="text-6xl font-bold text-white leading-tight mb-8">
+                        Start Your <br/>
+                        <span class="bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">
+                            Transformation
+                        </span>
+                    </h2>
 
-                <div class="text-center">
-                    <a href="{{ url_for('login') }}" 
-                       class="text-sm font-medium text-emerald-600 hover:text-emerald-500">
-                        Already have an account? Sign in here
-                    </a>
+                    <!-- Features Grid -->
+                    <div class="grid gap-6 mt-8">
+                        <div class="bg-gradient-to-br from-white/[0.08] to-white/[0.02] rounded-2xl p-6 backdrop-blur-sm border border-white/[0.05] transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center space-x-4">
+                                <div class="bg-emerald-400/20 p-3 rounded-xl">
+                                    <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-semibold">Easy Progress Tracking</h3>
+                                    <p class="text-white/60 text-sm">Monitor your journey with detailed insights</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-white/[0.08] to-white/[0.02] rounded-2xl p-6 backdrop-blur-sm border border-white/[0.05] transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center space-x-4">
+                                <div class="bg-blue-400/20 p-3 rounded-xl">
+                                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-semibold">Financial Insights</h3>
+                                    <p class="text-white/60 text-sm">Track your savings in real-time</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-white/[0.08] to-white/[0.02] rounded-2xl p-6 backdrop-blur-sm border border-white/[0.05] transform hover:scale-105 transition-transform duration-300">
+                            <div class="flex items-center space-x-4">
+                                <div class="bg-emerald-400/20 p-3 rounded-xl">
+                                    <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-semibold">Supportive Community</h3>
+                                    <p class="text-white/60 text-sm">Join others on the same journey</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+.float {
+    animation: float 6s ease-in-out infinite;
+}
+</style>
 {% endblock %} 

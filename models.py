@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime, timezone
 
 db = SQLAlchemy()
 
@@ -30,4 +30,9 @@ class Cigarette(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     smoked_at = db.Column(db.DateTime, default=datetime.utcnow)
-    cost = db.Column(db.Float, nullable=False) 
+    cost = db.Column(db.Float, nullable=False)
+    
+    @property
+    def local_time(self):
+        """Return the smoked_at time in ISO format for client-side conversion"""
+        return self.smoked_at.replace(tzinfo=timezone.utc).isoformat() 

@@ -3,7 +3,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Cigarette
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 import logging
 from flask_cors import CORS
@@ -264,7 +264,10 @@ def edit_cigarette(id):
     if request.method == 'POST':
         try:
             new_cost = float(request.form['cost'])
-            new_date = datetime.strptime(request.form['smoked_at'], '%Y-%m-%dT%H:%M')
+            # Assume the input is in local time, convert to UTC
+            local_date = datetime.strptime(request.form['smoked_at'], '%Y-%m-%dT%H:%M')
+            # Add UTC timezone info
+            new_date = local_date.astimezone(timezone.utc)
             
             cigarette.cost = new_cost
             cigarette.smoked_at = new_date

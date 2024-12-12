@@ -1,0 +1,122 @@
+:root {
+    --emerald-50: #ecfdf5;
+    --emerald-100: #d1fae5;
+    --emerald-500: #10b981;
+    --emerald-600: #059669;
+    --emerald-700: #047857;
+}
+
+body {
+    width: 320px;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #f9fafb;
+}
+
+.container {
+    padding: 16px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--emerald-100);
+}
+
+.logo {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--emerald-700);
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--emerald-100);
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.stat-icon {
+    font-size: 24px;
+    margin-right: 12px;
+    width: 32px;
+    text-align: center;
+}
+
+.stat-content h3 {
+    margin: 0;
+    font-size: 12px;
+    color: var(--emerald-600);
+    font-weight: 600;
+}
+
+.stat-value {
+    margin: 4px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--emerald-700);
+}
+
+.stat-label {
+    margin: 0;
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.footer {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.view-more {
+    display: inline-block;
+    padding: 8px 16px;
+    background: var(--emerald-500);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.view-more:hover {
+    background: var(--emerald-600);
+}
+
+.login-prompt {
+    padding: 24px;
+    text-align: center;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--emerald-100);
+}
+
+.login-prompt p {
+    color: #4b5563;
+    font-size: 14px;
+    margin-bottom: 16px;
+} 

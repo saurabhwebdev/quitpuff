@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, make_response
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Cigarette
@@ -6,10 +6,21 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 import logging
+from flask_cors import CORS
 
 load_dotenv()
 
 app = Flask(__name__)
+# Configure CORS
+CORS(app, 
+     resources={
+         "/api/*": {
+             "origins": ["chrome-extension://*", "https://quitpuff.onrender.com"],
+             "supports_credentials": True,
+             "allow_headers": ["Content-Type", "Authorization"],
+             "methods": ["GET", "POST", "OPTIONS"]
+         }
+     })
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -52,6 +63,12 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    # Check if it's an API request
+    if request.headers.get('Accept') == 'application/json':
+        if not current_user.is_authenticated:
+            return jsonify({'error': 'Not authenticated'}), 401
+        return jsonify({'success': True})
+    
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -361,6 +378,12 @@ def before_request():
 @app.after_request
 def after_request(response):
     app.logger.info(f"Request completed: {response.status_code}")
+    origin = request.headers.get('Origin', '')
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     return response
 
 @app.errorhandler(500)
@@ -368,6 +391,70 @@ def handle_500(error):
     app.logger.error(f"Internal Server Error: {error}")
     db.session.rollback()
     return render_template('error.html'), 500
+
+@app.route('/api/stats')
+@login_required
+def get_stats():
+    try:
+        app.logger.info("Stats endpoint called")
+        app.logger.info(f"User authenticated: {current_user.is_authenticated}")
+        app.logger.info(f"Request origin: {request.headers.get('Origin', 'No origin')}")
+        
+        if not current_user.is_authenticated:
+            return jsonify({'error': 'Not authenticated'}), 401
+        
+        # Calculate money saved
+        days_since_start = (datetime.utcnow() - current_user.created_at).days + 1
+        expected_total_cost = days_since_start * current_user.cigs_per_day * current_user.cost_per_cig
+        total_spent = sum(cig.cost for cig in current_user.cigarettes)
+        money_saved = expected_total_cost - total_spent
+        
+        # Get stats from context processor
+        stats_from_context = inject_stats()
+        
+        stats = {
+            'max_time_between': stats_from_context.get('max_time_between', 0),
+            'avg_time_between': stats_from_context.get('avg_time_between', 0),
+            'total_cigarettes': len(current_user.cigarettes),
+            'total_money_saved': money_saved,
+            'currency': current_user.currency
+        }
+        
+        app.logger.info(f"Sending stats: {stats}")
+        response = make_response(jsonify(stats))
+        
+        # Get the extension ID from the request
+        origin = request.headers.get('Origin', '')
+        app.logger.info(f"Request origin: {origin}")
+        
+        # Always set CORS headers for extension
+        response.headers['Access-Control-Allow-Origin'] = origin if origin else '*'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        app.logger.info("CORS headers set")
+        
+        return response
+    except Exception as e:
+        app.logger.error(f"Error in get_stats: {str(e)}", exc_info=True)
+        response = make_response(jsonify({'error': 'Internal server error'}), 500)
+        origin = request.headers.get('Origin', '')
+        response.headers['Access-Control-Allow-Origin'] = origin if origin else '*'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        return response
+
+@app.route('/api/stats', methods=['OPTIONS'])
+def handle_preflight():
+    response = make_response()
+    origin = request.headers.get('Origin', '')
+    
+    if origin.startswith('chrome-extension://'):
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+    
+    return response
 
 if __name__ == '__main__':
     # Create the instance directory if it doesn't exist

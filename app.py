@@ -3,13 +3,16 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Cigarette
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import logging
 from flask_cors import CORS
 from flask_migrate import Migrate
 
 load_dotenv()
+
+# Define IST timezone right after imports
+IST = timezone(timedelta(hours=5, minutes=30))  # Indian Standard Time offset
 
 app = Flask(__name__)
 # Configure CORS
@@ -191,15 +194,14 @@ def dashboard():
     total_cigarettes = query.count()
     total_spent = sum(cig.cost for cig in query.all())
     
-    # Calculate money saved
+    # Calculate money saved using IST
     if cigarettes:
-        # Calculate total savings
-        days_since_start = (datetime.utcnow() - current_user.created_at).days + 1
+        days_since_start = (datetime.now(IST) - current_user.created_at.replace(tzinfo=IST)).days + 1
         expected_total_cost = days_since_start * current_user.cigs_per_day * current_user.cost_per_cig
         total_money_saved = expected_total_cost - total_spent
         
         # Calculate today's savings
-        today = datetime.utcnow().date()
+        today = datetime.now(IST).date()
         today_cigarettes = query.filter(
             db.func.date(Cigarette.smoked_at) == today
         ).all()
@@ -239,13 +241,23 @@ def dashboard():
 @app.route('/add_cigarette', methods=['POST'])
 @login_required
 def add_cigarette():
-    cigarette = Cigarette(
-        user_id=current_user.id,
-        cost=current_user.cost_per_cig
-    )
-    db.session.add(cigarette)
-    db.session.commit()
-    return redirect(url_for('dashboard'))
+    try:
+        # Create a timezone-aware datetime in IST
+        ist_time = datetime.now(IST)
+        
+        cigarette = Cigarette(
+            user_id=current_user.id,
+            cost=current_user.cost_per_cig,
+            smoked_at=ist_time
+        )
+        db.session.add(cigarette)
+        db.session.commit()
+        return redirect(url_for('dashboard'))
+    except Exception as e:
+        app.logger.error(f"Error adding cigarette: {str(e)}")
+        db.session.rollback()
+        flash('An error occurred while adding the cigarette entry')
+        return render_template('error.html'), 500
 
 @app.route('/delete_cigarette/<int:id>')
 @login_required
@@ -266,16 +278,16 @@ def edit_cigarette(id):
     if request.method == 'POST':
         try:
             new_cost = float(request.form['cost'])
+            # Convert input to IST
             local_time_str = request.form['smoked_at']
-            local_time = datetime.strptime(local_time_str, '%Y-%m-%dT%H:%M').replace(tzinfo=timezone.utc)
-            cigarette.smoked_at = local_time
+            local_time = datetime.strptime(local_time_str, '%Y-%m-%dT%H:%M')
+            ist_time = local_time.replace(tzinfo=IST)
+            cigarette.smoked_at = ist_time
             cigarette.cost = new_cost
             db.session.commit()
             flash('Cigarette entry updated successfully')
         except ValueError as e:
-            app.logger.error(f"Error updating cigarette: {str(e)}")
             flash('Invalid date or time format')
-        
         return redirect(url_for('dashboard'))
     
     return render_template('edit_cigarette.html', cigarette=cigarette)

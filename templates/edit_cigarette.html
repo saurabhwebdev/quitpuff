@@ -34,9 +34,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const input = document.querySelector('input[type="datetime-local"]');
-        const utcDate = new Date('{{ cigarette.smoked_at.isoformat() }}Z');
-        const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
-        input.value = localDate.toISOString().slice(0, 16);
+        const istDate = new Date('{{ cigarette.formatted_time.isoformat() }}');
+        input.value = istDate.toISOString().slice(0, 16);
     });
 </script>
 {% endblock %} 

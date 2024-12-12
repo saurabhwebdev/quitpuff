@@ -29,10 +29,12 @@ class Cigarette(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    smoked_at = db.Column(db.DateTime, default=datetime.utcnow)
+    smoked_at = db.Column(db.DateTime(timezone=True), default=datetime.now(timezone.utc))
     cost = db.Column(db.Float, nullable=False)
     
     @property
     def local_time(self):
         """Return the smoked_at time in ISO format for client-side conversion"""
-        return self.smoked_at.replace(tzinfo=timezone.utc).isoformat() 
+        if self.smoked_at.tzinfo is None:
+            return self.smoked_at.replace(tzinfo=timezone.utc).isoformat()
+        return self.smoked_at.isoformat() 

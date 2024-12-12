@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from dotenv import load_dotenv
 import logging
 from flask_cors import CORS
+from flask_migrate import Migrate
 
 load_dotenv()
 
@@ -34,6 +35,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize database
 db.init_app(app)
+migrate = Migrate(app, db)
 
 def init_db():
     try:
@@ -264,17 +266,15 @@ def edit_cigarette(id):
     if request.method == 'POST':
         try:
             new_cost = float(request.form['cost'])
-            # Assume the input is in local time, convert to UTC
-            local_date = datetime.strptime(request.form['smoked_at'], '%Y-%m-%dT%H:%M')
-            # Add UTC timezone info
-            new_date = local_date.astimezone(timezone.utc)
-            
+            local_time_str = request.form['smoked_at']
+            local_time = datetime.strptime(local_time_str, '%Y-%m-%dT%H:%M').replace(tzinfo=timezone.utc)
+            cigarette.smoked_at = local_time
             cigarette.cost = new_cost
-            cigarette.smoked_at = new_date
             db.session.commit()
             flash('Cigarette entry updated successfully')
-        except ValueError:
-            flash('Invalid input data')
+        except ValueError as e:
+            app.logger.error(f"Error updating cigarette: {str(e)}")
+            flash('Invalid date or time format')
         
         return redirect(url_for('dashboard'))
     

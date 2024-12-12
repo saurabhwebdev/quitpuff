@@ -1,43 +1,76 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <div>
-            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Start Your Journey</h2>
-            <p class="mt-2 text-center text-sm text-gray-600">
-                Take the first step towards a smoke-free life
-            </p>
+<div class="min-h-screen flex">
+    <!-- Left Section - Illustration/Info -->
+    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-emerald-400 to-emerald-600 p-12 text-white items-center justify-center">
+        <div class="max-w-lg">
+            <div class="mb-8">
+                <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z M16 8L2 22M17.5 15H9" />
+                </svg>
+            </div>
+            <h1 class="text-4xl font-bold mb-6">Start Your Journey</h1>
+            <p class="text-lg mb-8 text-emerald-50">Join thousands of others who have successfully quit smoking using QuitPuff.</p>
+            <div class="space-y-4 text-emerald-50">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    <span>Easy to get started</span>
+                </div>
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span>Track your progress</span>
+                </div>
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span>Join our community</span>
+                </div>
+            </div>
         </div>
-        <form class="mt-8 space-y-6" action="{{ url_for('register') }}" method="POST">
-            <div class="rounded-md shadow-sm -space-y-px">
-                <div>
-                    <label for="username" class="sr-only">Username</label>
-                    <input id="username" name="username" type="text" required 
-                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm" 
-                            placeholder="Username">
-                </div>
-                <div>
-                    <label for="password" class="sr-only">Password</label>
-                    <input id="password" name="password" type="password" required 
-                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm" 
-                            placeholder="Password">
-                </div>
+    </div>
+
+    <!-- Right Section - Register Form -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 bg-white">
+        <div class="w-full max-w-md space-y-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-gray-900">Create Account</h2>
+                <p class="mt-2 text-sm text-gray-600">Take the first step towards a smoke-free life</p>
             </div>
 
-            <div>
+            <form class="mt-8 space-y-6" action="{{ url_for('register') }}" method="POST">
+                <div class="space-y-4">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                        <input type="text" id="username" name="username" required 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="password" name="password" required 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+                </div>
+
                 <button type="submit" 
-                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
-                    Register
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transform hover:scale-105 transition-all duration-200">
+                    Create Account
                 </button>
-            </div>
-            
-            <div class="text-sm text-center">
-                <a href="{{ url_for('login') }}" class="font-medium text-emerald-600 hover:text-emerald-500">
-                    Already have an account? Sign in here
-                </a>
-            </div>
-        </form>
+
+                <div class="text-center">
+                    <a href="{{ url_for('login') }}" 
+                       class="text-sm font-medium text-emerald-600 hover:text-emerald-500">
+                        Already have an account? Sign in here
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %} 

@@ -162,8 +162,21 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3 mt-3 sm:mt-0">
-                    <a href="{{ url_for('profile') }}" class="py-2 px-4 text-gray-700 hover:text-gray-900 rounded-lg hover:bg-gray-100">Profile</a>
-                    <a href="{{ url_for('logout') }}" class="py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">Logout</a>
+                    <a href="{{ url_for('profile') }}" 
+                       class="relative py-2 px-4 text-gray-700 rounded-lg group hover:text-emerald-600">
+                        <span>Profile</span>
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-emerald-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
+                    </a>
+                    <a href="{{ url_for('logout') }}" 
+                       class="py-2 px-4 text-white rounded-lg bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all duration-200 shadow-sm hover:shadow">
+                        <span class="flex items-center">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            Logout
+                        </span>
+                    </a>
                 </div>
                 {% endif %}
             </div>

@@ -57,22 +57,28 @@ def logout():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        
-        if User.query.filter_by(username=username).first():
-            flash('Username already exists')
+        try:
+            username = request.form['username']
+            password = request.form['password']
+            
+            if User.query.filter_by(username=username).first():
+                flash('Username already exists')
+                return redirect(url_for('register'))
+            
+            user = User(
+                username=username,
+                password=generate_password_hash(password)
+            )
+            db.session.add(user)
+            db.session.commit()
+            
+            login_user(user)
+            return redirect(url_for('onboarding'))
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f'Registration error: {str(e)}')
+            flash('An error occurred during registration. Please try again.')
             return redirect(url_for('register'))
-        
-        user = User(
-            username=username,
-            password=generate_password_hash(password)
-        )
-        db.session.add(user)
-        db.session.commit()
-        
-        login_user(user)
-        return redirect(url_for('onboarding'))
     
     return render_template('register.html')
 
@@ -291,6 +297,17 @@ def inject_stats():
             
         return {'max_time_between': max_time_between}
     return {}
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()  # Roll back any failed transactions
+    app.logger.error(f'Server Error: {str(error)}')
+    return render_template('error.html', error=error), 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    app.logger.error(f'Unhandled Exception: {str(e)}')
+    return render_template('error.html', error=e), 500
 
 if __name__ == '__main__':
     # Create the instance directory if it doesn't exist

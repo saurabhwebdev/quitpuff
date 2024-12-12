@@ -207,33 +207,53 @@
             <div class="border-t border-gray-100 pt-6">
                 <!-- Stats Row -->
                 {% if cigarettes and cigarettes|length > 1 %}
-                <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
-                    <h3 class="text-sm font-medium text-gray-500 mb-6">Time Between Cigarettes</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div>
-                            <p class="text-sm text-gray-600 mb-1">Average Time</p>
-                            <div class="flex items-baseline">
-                                <span class="text-2xl font-bold text-gray-900">
-                                    {% if avg_time_between >= 24 %}
-                                        {{ "%.1f"|format(avg_time_between/24) }} days
-                                    {% else %}
-                                        {{ "%.1f"|format(avg_time_between) }} hours
-                                    {% endif %}
-                                </span>
-                                <span class="ml-2 text-sm text-gray-500">per cigarette</span>
+                <div class="bg-gradient-to-br from-white to-emerald-50 rounded-xl shadow-lg p-8 mb-8 transform hover:scale-105 transition-all duration-300">
+                    <div class="flex items-center mb-6">
+                        <svg class="w-6 h-6 text-emerald-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="text-lg font-semibold text-gray-800">Time Between Cigarettes</h3>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <p class="text-sm font-medium text-emerald-600 mb-2">Average Time</p>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent">
+                                     {% if avg_time_between >= 24 %}
+                                         {{ "%.1f"|format(avg_time_between/24) }} days
+                                     {% else %}
+                                         {{ "%.1f"|format(avg_time_between) }} hours
+                                     {% endif %}
+                                 </span>
+                                <span class="text-sm text-gray-500 font-medium">per cigarette</span>
+                            </div>
+                            <div class="mt-2 flex items-center text-xs text-gray-500">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>Based on your smoking history</span>
                             </div>
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-600 mb-1">Longest Break</p>
-                            <div class="flex items-baseline">
-                                <span class="text-2xl font-bold text-emerald-600">
-                                    {% if max_time_between >= 24 %}
-                                        {{ "%.1f"|format(max_time_between/24) }} days
-                                    {% else %}
-                                        {{ "%.1f"|format(max_time_between) }} hours
-                                    {% endif %}
-                                </span>
-                                <span class="ml-2 text-sm text-gray-500">smoke-free</span>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <p class="text-sm font-medium text-emerald-600 mb-2">Longest Break</p>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent">
+                                     {% if max_time_between >= 24 %}
+                                         {{ "%.1f"|format(max_time_between/24) }} days
+                                     {% else %}
+                                         {{ "%.1f"|format(max_time_between) }} hours
+                                     {% endif %}
+                                 </span>
+                                <span class="text-sm text-gray-500 font-medium">smoke-free</span>
+                            </div>
+                            <div class="mt-2 flex items-center text-xs text-gray-500">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                                </svg>
+                                <span>Your personal best</span>
                             </div>
                         </div>
                     </div>

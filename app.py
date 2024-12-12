@@ -5,18 +5,37 @@ from models import db, User, Cigarette
 import os
 from datetime import datetime
 from dotenv import load_dotenv
+import logging
 
 load_dotenv()
 
 app = Flask(__name__)
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key-please-change')
 # Use PostgreSQL on Render, fallback to SQLite in development
 database_url = os.getenv('DATABASE_URL', 'sqlite:///database.db')
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Initialize database
 db.init_app(app)
+
+def init_db():
+    try:
+        with app.app_context():
+            db.create_all()
+            app.logger.info("Database tables created successfully")
+    except Exception as e:
+        app.logger.error(f"Error creating database tables: {str(e)}")
+        raise
+
+# Create tables
+init_db()
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -61,22 +80,33 @@ def register():
             username = request.form['username']
             password = request.form['password']
             
+            app.logger.info(f"Attempting to register user: {username}")
+            
             if User.query.filter_by(username=username).first():
                 flash('Username already exists')
                 return redirect(url_for('register'))
             
             user = User(
                 username=username,
-                password=generate_password_hash(password)
+                password=generate_password_hash(password),
+                created_at=datetime.utcnow()
             )
             db.session.add(user)
-            db.session.commit()
+            app.logger.info("Added user to session")
+            
+            try:
+                db.session.commit()
+                app.logger.info("Successfully committed user to database")
+            except Exception as e:
+                app.logger.error(f"Database commit error: {str(e)}")
+                db.session.rollback()
+                raise
             
             login_user(user)
             return redirect(url_for('onboarding'))
         except Exception as e:
             db.session.rollback()
-            app.logger.error(f'Registration error: {str(e)}')
+            app.logger.error(f'Registration error: {str(e)}', exc_info=True)
             flash('An error occurred during registration. Please try again.')
             return redirect(url_for('register'))
     

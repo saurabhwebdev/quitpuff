@@ -16,8 +16,13 @@ class User(UserMixin, db.Model):
     cost_per_cig = db.Column(db.Float, nullable=True)
     currency = db.Column(db.String(10), nullable=True)
     cigs_per_pack = db.Column(db.Integer, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     cigarettes = db.relationship('Cigarette', backref='user', lazy=True)
+
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        if 'created_at' not in kwargs:
+            self.created_at = datetime.utcnow()
 
 class Cigarette(db.Model):
     __tablename__ = 'cigarettes'

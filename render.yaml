@@ -2,10 +2,20 @@ services:
   - type: web
     name: quitpuff
     env: python
+    region: singapore
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
       - key: SECRET_KEY
-        generateValue: true 
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: quitpuff_db
+          property: connectionString
+
+databases:
+  - name: quitpuff_db
+    region: singapore
+    plan: free 

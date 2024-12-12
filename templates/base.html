@@ -141,24 +141,50 @@
                     </div>
                 </div>
                 {% if current_user.is_authenticated %}
-                <!-- Longest Break Stats -->
-                <div class="hidden md:flex items-center bg-emerald-50 rounded-lg px-4 py-2 border border-emerald-100">
-                    <div class="mr-3">
-                        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                <!-- Stats Toggle in Navbar -->
+                <div class="hidden md:flex items-center bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg px-3 py-2 border border-emerald-100 relative overflow-hidden cursor-pointer hover:from-emerald-100 hover:to-emerald-200 transition-all duration-200 shadow-sm"
+                     onclick="toggleStats()" id="statsToggle">
+                    <div class="w-[220px] h-[52px] relative">
+                    <!-- Longest Break Stats -->
+                    <div class="flex items-center transition-all duration-500 ease-in-out absolute inset-0 px-3 py-1.5" id="longestBreakStats">
+                        <div class="mr-3">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-emerald-700 font-semibold tracking-wide">Longest Break 🏆</p>
+                            <p class="text-sm font-bold text-emerald-700">
+                                {% if max_time_between >= 24 %}
+                                    {{ "%.1f"|format(max_time_between/24) }} days
+                                {% else %}
+                                    {{ "%.1f"|format(max_time_between) }} hours
+                                {% endif %}
+                                <span class="text-xs font-medium text-emerald-600 ml-1">smoke-free</span>
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-xs text-emerald-600 font-medium">Longest Break</p>
-                        <p class="text-sm font-bold text-emerald-700">
-                            {% if max_time_between >= 24 %}
-                                {{ "%.1f"|format(max_time_between/24) }} days
-                            {% else %}
-                                {{ "%.1f"|format(max_time_between) }} hours
-                            {% endif %}
-                            <span class="text-xs font-normal text-emerald-600">smoke-free</span>
-                        </p>
+                    <!-- Average Time Stats -->
+                    <div class="flex items-center transition-all duration-500 ease-in-out absolute inset-0 px-3 py-1.5 translate-x-full" id="averageTimeStats">
+                        <div class="mr-3">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-emerald-700 font-semibold tracking-wide">Average Time 📊</p>
+                            <p class="text-sm font-bold text-emerald-700">
+                                {% if avg_time_between >= 24 %}
+                                    {{ "%.1f"|format(avg_time_between/24) }} days
+                                {% else %}
+                                    {{ "%.1f"|format(avg_time_between) }} hours
+                                {% endif %}
+                                <span class="text-xs font-medium text-emerald-600 ml-1">per cigarette</span>
+                            </p>
+                        </div>
+                    </div>
                     </div>
                 </div>
                 <div class="flex items-center gap-3 mt-3 sm:mt-0">
@@ -196,5 +222,26 @@
         
         {% block content %}{% endblock %}
     </div>
+    <script>
+        let showingLongestBreak = true;
+        
+        function toggleStats() {
+            const longestBreakStats = document.getElementById('longestBreakStats');
+            const averageTimeStats = document.getElementById('averageTimeStats');
+            
+            if (showingLongestBreak) {
+                longestBreakStats.style.transform = 'translateX(-100%)';
+                averageTimeStats.style.transform = 'translateX(0)';
+            } else {
+                longestBreakStats.style.transform = 'translateX(0)';
+                averageTimeStats.style.transform = 'translateX(100%)';
+            }
+            
+            showingLongestBreak = !showingLongestBreak;
+        }
+        
+        // Auto toggle every 4 seconds
+        setInterval(toggleStats, 4000);
+    </script>
 </body>
 </html> 

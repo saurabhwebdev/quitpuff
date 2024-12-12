@@ -314,18 +314,23 @@ def inject_stats():
         # Get all cigarettes for the user
         cigarettes = Cigarette.query.filter_by(user_id=current_user.id).order_by(Cigarette.smoked_at.desc()).all()
         
-        # Calculate max time between cigarettes
+        # Calculate average and max time between cigarettes
+        avg_time_between = 0
+        max_time_between = 0
+        
         if len(cigarettes) > 1:
             time_diffs = []
             sorted_cigs = sorted(cigarettes, key=lambda x: x.smoked_at)
             for i in range(len(sorted_cigs)-1):
                 diff = sorted_cigs[i].smoked_at - sorted_cigs[i+1].smoked_at
                 time_diffs.append(abs(diff.total_seconds() / 3600))  # Convert to hours
+            avg_time_between = sum(time_diffs) / len(time_diffs) if time_diffs else 0
             max_time_between = max(time_diffs) if time_diffs else 0
-        else:
-            max_time_between = 0
-            
-        return {'max_time_between': max_time_between}
+        
+        return {
+            'max_time_between': max_time_between,
+            'avg_time_between': avg_time_between
+        }
     return {}
 
 @app.errorhandler(500)

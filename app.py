@@ -53,14 +53,26 @@ migrate = Migrate(app, db)
 def init_db():
     try:
         with app.app_context():
-            db.create_all()
-            app.logger.info("Database tables created successfully")
+            # Check if database exists
+            if not os.path.exists(database_path):
+                db.create_all()
+                app.logger.info("Database tables created successfully")
+            else:
+                # Verify database connection
+                db.session.execute('SELECT 1')
+                app.logger.info("Database connection verified")
     except Exception as e:
-        app.logger.error(f"Error creating database tables: {str(e)}")
+        app.logger.error(f"Database initialization error: {str(e)}")
         raise
 
-# Create tables
-init_db()
+# Add this function for better error handling
+@app.before_first_request
+def check_db():
+    try:
+        db.session.execute('SELECT 1')
+    except Exception as e:
+        app.logger.error(f"Database check failed: {str(e)}")
+        init_db()
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -509,6 +521,26 @@ def test_db():
         return 'Database connection successful!'
     except Exception as e:
         return f'Database error: {str(e)}'
+
+@app.route('/db-health')
+def db_health():
+    try:
+        # Test database connection
+        db.session.execute('SELECT 1')
+        return jsonify({
+            'status': 'healthy',
+            'database': 'connected',
+            'path': database_path,
+            'exists': os.path.exists(database_path)
+        })
+    except Exception as e:
+        app.logger.error(f"Health check failed: {str(e)}")
+        return jsonify({
+            'status': 'unhealthy',
+            'error': str(e),
+            'path': database_path,
+            'exists': os.path.exists(database_path)
+        }), 500
 
 if __name__ == '__main__':
     # Create the instance directory if it doesn't exist

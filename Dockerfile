@@ -9,5 +9,8 @@ RUN pip install -r requirements.txt
 # Copy the rest of the application
 COPY . .
 
-# Command to run the application
-CMD gunicorn app:app 
+# Create instance directory
+RUN mkdir -p instance && chmod 777 instance
+
+# Initialize database and run migrations
+CMD flask db upgrade && gunicorn app:app 

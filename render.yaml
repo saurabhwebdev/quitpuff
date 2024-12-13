@@ -4,6 +4,10 @@ services:
     env: docker
     region: singapore
     dockerfilePath: ./Dockerfile
+    disk:
+      name: sqlite-data
+      mountPath: /opt/render/project/src/instance
+      sizeGB: 1
     envVars:
       - key: SECRET_KEY
         generateValue: true

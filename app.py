@@ -32,13 +32,13 @@ CORS(app,
 logging.basicConfig(level=logging.DEBUG)
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key-please-change')
-# Create a persistent storage directory
-PERSISTENT_STORAGE = pathlib.Path("/data")
-if not PERSISTENT_STORAGE.exists():
-    PERSISTENT_STORAGE.mkdir(parents=True, exist_ok=True)
+# Use the instance folder for SQLite database
+INSTANCE_PATH = os.path.join(os.getcwd(), 'instance')
+if not os.path.exists(INSTANCE_PATH):
+    os.makedirs(INSTANCE_PATH, exist_ok=True)
 
 # Configure database
-database_path = PERSISTENT_STORAGE / "database.db"
+database_path = os.path.join(INSTANCE_PATH, 'database.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{database_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {

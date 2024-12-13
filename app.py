@@ -8,6 +8,9 @@ from dotenv import load_dotenv
 import logging
 from flask_cors import CORS
 from flask_migrate import Migrate
+import pathlib
+import sqlite3
+from contextlib import contextmanager
 
 load_dotenv()
 
@@ -29,12 +32,19 @@ CORS(app,
 logging.basicConfig(level=logging.DEBUG)
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key-please-change')
-# Use PostgreSQL on Render, fallback to SQLite in development
-database_url = os.getenv('DATABASE_URL', 'sqlite:///database.db')
-if database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+# Create a persistent storage directory
+PERSISTENT_STORAGE = pathlib.Path("/data")
+if not PERSISTENT_STORAGE.exists():
+    PERSISTENT_STORAGE.mkdir(parents=True, exist_ok=True)
+
+# Configure database
+database_path = PERSISTENT_STORAGE / "database.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{database_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_pre_ping': True,  # Enable automatic reconnection
+    'pool_recycle': 300,    # Recycle connections every 5 minutes
+}
 
 # Initialize database
 db.init_app(app)
@@ -238,24 +248,37 @@ def dashboard():
                          current_order=order,
                          current_date=date_filter)
 
+@contextmanager
+def get_db_connection():
+    try:
+        db.session.begin()
+        yield
+        db.session.commit()
+    except sqlite3.OperationalError as e:
+        app.logger.error(f"Database error: {e}")
+        db.session.rollback()
+        raise
+    except Exception as e:
+        app.logger.error(f"Unexpected error: {e}")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
+
 @app.route('/add_cigarette', methods=['POST'])
 @login_required
 def add_cigarette():
     try:
-        # Create a timezone-aware datetime in IST
-        ist_time = datetime.now(IST)
-        
-        cigarette = Cigarette(
-            user_id=current_user.id,
-            cost=current_user.cost_per_cig,
-            smoked_at=ist_time
-        )
-        db.session.add(cigarette)
-        db.session.commit()
+        with get_db_connection():
+            ist_time = datetime.now(IST)
+            cigarette = Cigarette(
+                user_id=current_user.id,
+                cost=current_user.cost_per_cig,
+                smoked_at=ist_time
+            )
+            db.session.add(cigarette)
         return redirect(url_for('dashboard'))
     except Exception as e:
-        app.logger.error(f"Error adding cigarette: {str(e)}")
-        db.session.rollback()
         flash('An error occurred while adding the cigarette entry')
         return render_template('error.html'), 500
 
@@ -388,6 +411,14 @@ def health_check():
 
 @app.before_request
 def before_request():
+    try:
+        db.session.execute('SELECT 1')
+    except Exception:
+        db.session.rollback()
+        try:
+            db.session.execute('SELECT 1')
+        except Exception:
+            return 'Database connection error', 500
     app.logger.info(f"Processing request: {request.method} {request.path}")
 
 @app.after_request
@@ -470,6 +501,14 @@ def handle_preflight():
         response.headers['Access-Control-Allow-Credentials'] = 'true'
     
     return response
+
+@app.route('/db-test')
+def test_db():
+    try:
+        db.session.execute('SELECT 1')
+        return 'Database connection successful!'
+    except Exception as e:
+        return f'Database error: {str(e)}'
 
 if __name__ == '__main__':
     # Create the instance directory if it doesn't exist

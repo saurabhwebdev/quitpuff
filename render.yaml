@@ -1,22 +1,11 @@
 services:
   - type: web
     name: quitpuff
-    env: python
+    env: docker
     region: singapore
-    buildCommand: pip install -r requirements.txt
-    startCommand: >
-      flask db upgrade && gunicorn app:app
+    dockerfilePath: ./Dockerfile
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
       - key: SECRET_KEY
         generateValue: true
-      - key: DATABASE_URL
-        fromDatabase:
-          name: quitpuff_db
-          property: connectionString
-
-databases:
-  - name: quitpuff_db
-    region: singapore
-    plan: free 
+      - key: FLASK_APP
+        value: app.py
